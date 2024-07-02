@@ -3,36 +3,43 @@ const db = require("../models");
 module.exports = {
   validateUserService: async (data) => {
     try{
-        const validateUser = await db.users.find({
+        const validateUser = await db.users.findOne({
           $or: [
             { email: data.email },
-            { username: data.username }
+            { username: data.email }
           ]
         });
   // Dont have time to implement JWT so just sent the response
         if(validateUser && validateUser.length!==0){
-            return validateUser
+          if (data.password===validateUser.password)  return validateUser 
+          else throw new Error("Invalid password");
         }
+        else throw new Error("Username / email doesn't exists");
     }
     catch(err){
-        return err
+        throw err
     }
   },
-  saveUserService:(data) => {
-    try{
-      const existingUser = db.users.find({ email: data.email, username: data.username });
-      if (existingUser) {
-        throw new Error("Username / email already exists"); // Use new Error() for error creation
-      }
-      else{
-        const saveUser = db.users.insertOne(data);
-        if(saveUser){
-            return saveUser
+  saveUserService: async (data) => {
+    try {
+      const existingUser = await db.users.find({
+        $or: [
+          { email: data.email },
+          { username: data.username }
+        ]
+      });
+      if (existingUser.length != 0) {
+        throw new Error("Username / email already exists");
+      } else {
+        const saveUser = await db.users.create(data); 
+        if (saveUser) {
+          return saveUser;
+        } else {
+          throw new Error("User creation failed");
         }
       }
-    }
-    catch(err){
-        return err
+    } catch (err) {
+      throw err; 
     }
   },
-};
+}  
