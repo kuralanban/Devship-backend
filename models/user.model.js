@@ -20,6 +20,9 @@ module.exports = (mongoose) => {
       username: {
         type: String,
       },
+      activeStatus:  {
+        type: Boolean,
+      },
       password:  {
         type: String,
       },

@@ -15,6 +15,7 @@ app.use(cors());
 
 //Body-parser
 app.use(bodyParser.json())
+// app.get("/users",()=>{console.log("users")})
 //Load Routes
 require("./routes/user.route")(app);
 app.listen(PORT,()=>{

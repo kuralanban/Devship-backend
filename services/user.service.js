@@ -42,4 +42,41 @@ module.exports = {
       throw err; 
     }
   },
-}  
+  getUsers: async (page,pageSize) => {
+    try{
+      const skip = (page - 1) * pageSize;
+      const users = await db.users.find({}).skip(skip).limit(pageSize);
+      const totalUsers = await db.users.countDocuments();
+      const totalPages = Math.ceil(totalUsers / pageSize);      
+        if(users){
+          return {users:users,totalPages:totalPages}
+        }
+      }
+    catch(err){
+        throw err
+    }
+},
+deleteuserService:async (id) => {
+  try{
+    console.log(id)
+    const users = await db.users.deleteOne({_id:id})
+      if(users){
+        return users
+      }
+    }
+  catch(err){
+      throw err
+  }
+},
+updateuserService:async (id,data) => {
+  try{
+    const users = await db.users.updateOne({_id:id,data})
+      if(users){
+        return users
+      }
+    }
+  catch(err){
+      throw err
+  }
+},
+}
